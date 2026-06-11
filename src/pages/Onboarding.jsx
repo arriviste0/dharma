@@ -2,8 +2,7 @@ import { useState, useEffect, useRef } from 'react';
 import { useNavigate } from 'react-router-dom';
 import MandalaBg from '../components/svgs/MandalaBg';
 import krishnaImg from '../assets/krishna.png';
-// TODO: add ka.png to src/assets/ then uncomment:
-// import kaImg from '../assets/ka.png';
+import kaImg from '../assets/ka.png';
 
 // ─── Phase order ────────────────────────────────────────────────────────────
 // dark → stars → figures → dialogue → verse → ready → closing → done
@@ -224,20 +223,11 @@ export default function Onboarding({ onComplete }) {
             animation: 'breath-pulse 5s ease-in-out infinite',
           }}
         >
-          {/* swap span → <img src={kaImg} ... /> once ka.png is in assets */}
-          <span
-            className="font-dev"
-            style={{
-              fontSize: 'clamp(40px, 8vw, 68px)',
-              background: 'linear-gradient(135deg, #E8843C, #C9A961)',
-              WebkitBackgroundClip: 'text',
-              WebkitTextFillColor: 'transparent',
-              backgroundClip: 'text',
-              filter: 'drop-shadow(0 0 12px rgba(201,169,97,0.45))',
-            }}
-          >
-            ॐ
-          </span>
+          <img src={kaImg} alt="Dharma" style={{
+            width: 'clamp(56px, 10vw, 88px)',
+            height: 'auto',
+            filter: 'drop-shadow(0 0 14px rgba(201,169,97,0.5))',
+          }} />
         </div>
 
         {/* Dialogue exchange */}
@@ -464,18 +454,11 @@ export default function Onboarding({ onComplete }) {
           transition: closing ? 'opacity 0.3s ease 0.4s' : 'none',
         }}
       >
-        <span
-          className="font-dev"
-          style={{
-            fontSize: 'clamp(48px, 10vw, 80px)',
-            background: 'linear-gradient(135deg, #E8843C, #C9A961)',
-            WebkitBackgroundClip: 'text',
-            WebkitTextFillColor: 'transparent',
-            backgroundClip: 'text',
-          }}
-        >
-          ॐ
-        </span>
+        <img src={kaImg} alt="Dharma" style={{
+          width: 'clamp(64px, 12vw, 100px)',
+          height: 'auto',
+          filter: 'drop-shadow(0 0 20px rgba(201,169,97,0.7))',
+        }} />
       </div>
     </div>
   );
