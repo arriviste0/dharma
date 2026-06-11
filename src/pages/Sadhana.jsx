@@ -129,13 +129,20 @@ function PillarEditor({ pillar, onSave, onCancel }) {
   const [icon, setIcon] = useState(pillar.icon);
   const [color, setColor] = useState(pillar.color);
 
+  const inputCls =
+    'text-sm text-[#1a1a2e] dark:text-white placeholder-stone-400 ' +
+    'bg-white dark:bg-white/[0.12] ' +
+    'border border-black/12 dark:border-white/25 ' +
+    'rounded-xl px-3 py-2.5 outline-none focus:border-[#E8843C] transition-colors';
+
   return (
     <div className="space-y-3">
       <div className="flex gap-2">
         <input value={english} onChange={(e) => setEnglish(e.target.value)} placeholder="Name"
-          className="flex-1 text-sm text-[#1a1a2e] dark:text-white placeholder-stone-400 bg-white dark:bg-white/8 border border-black/8 dark:border-white/8 rounded-xl px-3 py-2.5 outline-none focus:border-[#E8843C]" />
+          autoFocus
+          className={`flex-1 ${inputCls}`} />
         <input value={sanskrit} onChange={(e) => setSanskrit(e.target.value)} placeholder="Sanskrit"
-          className="w-28 text-sm font-dev text-[#1a1a2e] dark:text-white placeholder-stone-400 bg-white dark:bg-white/8 border border-black/8 dark:border-white/8 rounded-xl px-3 py-2.5 outline-none focus:border-[#E8843C]" />
+          className={`w-28 font-dev ${inputCls}`} />
       </div>
       <div>
         <p className="text-xs text-stone-400 mb-2">Icon</p>
@@ -143,7 +150,9 @@ function PillarEditor({ pillar, onSave, onCancel }) {
           {ICON_OPTIONS.map(({ id, Icon }) => (
             <button key={id} type="button" onClick={() => setIcon(id)}
               className={`w-9 h-9 rounded-xl flex items-center justify-center border transition-all ${
-                icon === id ? 'border-[#E8843C] bg-[#E8843C]/10' : 'border-black/8 dark:border-white/8'
+                icon === id
+                  ? 'border-[#E8843C] bg-[#E8843C]/10'
+                  : 'border-black/10 dark:border-white/20 bg-white/50 dark:bg-white/5'
               }`}>
               <Icon size={15} style={{ color: icon === id ? '#E8843C' : '#9CA3AF' }} />
             </button>
@@ -155,8 +164,12 @@ function PillarEditor({ pillar, onSave, onCancel }) {
         <div className="flex flex-wrap gap-2">
           {COLOR_OPTIONS.map((c) => (
             <button key={c} type="button" onClick={() => setColor(c)}
-              className={`w-7 h-7 rounded-full transition-all ${color === c ? 'scale-110 ring-2 ring-offset-1 ring-stone-400' : ''}`}
-              style={{ backgroundColor: c }} />
+              className="w-7 h-7 rounded-full transition-all"
+              style={{
+                backgroundColor: c,
+                boxShadow: color === c ? `0 0 0 2px #fff, 0 0 0 4px ${c}` : 'none',
+                transform: color === c ? 'scale(1.15)' : 'scale(1)',
+              }} />
           ))}
         </div>
       </div>
