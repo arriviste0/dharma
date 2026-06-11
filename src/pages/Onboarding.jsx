@@ -1,6 +1,9 @@
 import { useState, useEffect, useRef } from 'react';
 import { useNavigate } from 'react-router-dom';
 import MandalaBg from '../components/svgs/MandalaBg';
+import krishnaImg from '../assets/krishna.png';
+// TODO: add ka.png to src/assets/ then uncomment:
+// import kaImg from '../assets/ka.png';
 
 // ─── Phase order ────────────────────────────────────────────────────────────
 // dark → stars → figures → dialogue → verse → ready → closing → done
@@ -12,119 +15,6 @@ const PHASE_TIMINGS = [
   { phase: 'ready',    delay: 5800 },
 ];
 
-// ─── Krishna silhouette ──────────────────────────────────────────────────────
-function KrishnaSVG({ style }) {
-  return (
-    <svg viewBox="0 0 120 260" xmlns="http://www.w3.org/2000/svg" style={style}>
-      {/* Halo rings */}
-      <circle cx="60" cy="52" r="42" fill="none" stroke="#C9A961" strokeWidth="0.6" opacity="0.2"/>
-      <circle cx="60" cy="52" r="34" fill="none" stroke="#C9A961" strokeWidth="0.5" opacity="0.15"/>
-
-      {/* Peacock feather */}
-      <path d="M60 18 Q60 6 60 0" stroke="#5A8A8A" strokeWidth="1.8" strokeLinecap="round"/>
-      <ellipse cx="60" cy="-1" rx="7" ry="10" fill="none" stroke="#C9A961" strokeWidth="1.4" opacity="0.85"/>
-      <ellipse cx="60" cy="0" rx="3.5" ry="5.5" fill="#5A8A8A" opacity="0.75"/>
-      <circle cx="60" cy="0" r="1.8" fill="#1e2240"/>
-      <circle cx="59" cy="-1" r="0.8" fill="white" opacity="0.5"/>
-
-      {/* Crown */}
-      <path d="M38 20 L46 11 L52 18 L60 9 L68 18 L74 11 L82 20"
-        stroke="#C9A961" strokeWidth="2.2" fill="none" strokeLinecap="round" strokeLinejoin="round"/>
-
-      {/* Head */}
-      <ellipse cx="60" cy="38" rx="21" ry="24" fill="#3B5BA5"/>
-
-      {/* Face hint – eyes */}
-      <circle cx="53" cy="35" r="2" fill="#C9A961" opacity="0.45"/>
-      <circle cx="67" cy="35" r="2" fill="#C9A961" opacity="0.45"/>
-      <path d="M54 44 Q60 49 66 44" stroke="#C9A961" strokeWidth="1" fill="none" opacity="0.4"/>
-
-      {/* Neck */}
-      <rect x="52" y="60" width="16" height="10" rx="4" fill="#3B5BA5"/>
-
-      {/* Body – robe */}
-      <path d="M60 70 C42 70 26 88 26 118 L30 220 C30 232 44 238 60 238 C76 238 90 232 90 220 L94 118 C94 88 78 70 60 70Z"
-        fill="#3B5BA5"/>
-
-      {/* Right arm – raised, abhaya mudra */}
-      <path d="M90 104 L116 74" stroke="#3B5BA5" strokeWidth="16" strokeLinecap="round"/>
-      <ellipse cx="119" cy="70" rx="10" ry="13" fill="#3B5BA5"/>
-      {/* fingers hint */}
-      <path d="M113 62 L116 58 M118 60 L120 56 M123 62 L125 59"
-        stroke="#C9A961" strokeWidth="1.2" strokeLinecap="round" opacity="0.6"/>
-
-      {/* Left arm – extending toward Arjuna, teaching */}
-      <path d="M26 110 L-8 136" stroke="#3B5BA5" strokeWidth="16" strokeLinecap="round"/>
-
-      {/* Flute in left hand */}
-      <path d="M-12 133 L22 120" stroke="#C9A961" strokeWidth="2.8" strokeLinecap="round"/>
-      <circle cx="-3" cy="130" r="1.8" fill="#C9A961" opacity="0.7"/>
-      <circle cx="6"  cy="127" r="1.8" fill="#C9A961" opacity="0.7"/>
-      <circle cx="14" cy="124" r="1.8" fill="#C9A961" opacity="0.7"/>
-
-      {/* Robe drape lines */}
-      <path d="M42 170 L36 238 M60 175 L60 238 M78 170 L84 238"
-        stroke="#C9A961" strokeWidth="0.8" opacity="0.2"/>
-
-      {/* Divine glow emanating outward */}
-      <ellipse cx="60" cy="140" rx="36" ry="80" fill="#C9A961" opacity="0.03"/>
-    </svg>
-  );
-}
-
-// ─── Arjuna silhouette ───────────────────────────────────────────────────────
-function ArjunaSVG({ style }) {
-  return (
-    <svg viewBox="0 0 120 260" xmlns="http://www.w3.org/2000/svg" style={style}>
-      {/* Gandiva bow (behind body) */}
-      <path d="M100 18 Q130 110 100 220"
-        stroke="#8B7040" strokeWidth="4" fill="none" strokeLinecap="round"/>
-      <line x1="100" y1="18" x2="100" y2="220"
-        stroke="#C9A961" strokeWidth="1.2" strokeDasharray="6,5" opacity="0.65"/>
-
-      {/* Helmet */}
-      <path d="M36 34 Q60 18 84 34" stroke="#6A6A80" strokeWidth="3.5" fill="none"/>
-      <path d="M36 34 Q38 24 60 20 Q82 24 84 34 L82 50 Q60 46 38 50Z"
-        fill="#505068"/>
-      <rect x="52" y="14" width="16" height="12" rx="3" fill="#505068"/>
-      <line x1="60" y1="12" x2="60" y2="6" stroke="#C9A961" strokeWidth="2.2" strokeLinecap="round"/>
-      <circle cx="60" cy="5" r="3.5" fill="#C9A961" opacity="0.85"/>
-
-      {/* Head – slightly bowed toward Krishna (left) */}
-      <ellipse cx="56" cy="64" rx="20" ry="22"
-        fill="#5A3A1A"
-        style={{ transform: 'rotate(-12deg)', transformOrigin: '56px 64px' }}/>
-
-      {/* Neck */}
-      <rect x="48" y="84" width="14" height="10" rx="3" fill="#5A3A1A"/>
-
-      {/* Body */}
-      <path d="M60 94 C44 94 28 112 30 142 L34 222 C34 234 46 240 60 240 C74 240 86 234 86 222 L90 142 C92 112 76 94 60 94Z"
-        fill="#4A3020"/>
-
-      {/* Armour breastplate */}
-      <path d="M36 110 L84 110 L88 165 L32 165Z" fill="#5A4030" opacity="0.5"/>
-      <path d="M40 110 L80 110 L83 152 L37 152Z" fill="none" stroke="#8B6914" strokeWidth="0.8" opacity="0.5"/>
-      {/* Armour center motif */}
-      <path d="M55 130 L60 122 L65 130 L60 138Z" fill="#8B6914" opacity="0.3"/>
-
-      {/* Left arm – in pranama, palms joined toward Krishna */}
-      <path d="M30 125 L4 155" stroke="#4A3020" strokeWidth="15" strokeLinecap="round"/>
-      <path d="M4 155 L10 178" stroke="#4A3020" strokeWidth="12" strokeLinecap="round"/>
-
-      {/* Joined-hands detail */}
-      <ellipse cx="7"  cy="176" rx="8" ry="11" fill="#4A3020"/>
-      <ellipse cx="15" cy="178" rx="8" ry="11" fill="#3D2818"/>
-
-      {/* Right arm – gripping bow */}
-      <path d="M90 118 L100 100" stroke="#4A3020" strokeWidth="14" strokeLinecap="round"/>
-
-      {/* Foot detail */}
-      <path d="M42 236 L48 244 L55 238" stroke="#8B6914" strokeWidth="1.8" fill="none" strokeLinecap="round" opacity="0.5"/>
-      <path d="M65 238 L72 244 L78 236" stroke="#8B6914" strokeWidth="1.8" fill="none" strokeLinecap="round" opacity="0.5"/>
-    </svg>
-  );
-}
 
 // ─── Typewriter ──────────────────────────────────────────────────────────────
 function TypeWriter({ text, speed = 55, startDelay = 0, className = '' }) {
@@ -265,35 +155,43 @@ export default function Onboarding({ onComplete }) {
         className="absolute inset-x-0 pointer-events-none"
         style={{ top: '8%', bottom: '20%' }}
       >
-        {/* Krishna (left) */}
-        <div
+        {/* Krishna (left) — normal orientation */}
+        <img
+          src={krishnaImg}
+          alt="Krishna"
           style={{
             position: 'absolute',
-            left: '3%',
+            left: '2%',
             bottom: 0,
-            width: 'clamp(110px, 22vw, 210px)',
+            width: 'clamp(130px, 26vw, 280px)',
+            height: 'auto',
+            objectFit: 'contain',
+            objectPosition: 'bottom',
             opacity: vis('figures') ? 1 : 0,
-            transform: vis('figures') ? 'translateY(0)' : 'translateY(24px)',
+            transform: vis('figures') ? 'translateY(0)' : 'translateY(30px)',
             transition: 'opacity 1.2s ease 0.1s, transform 1.2s ease 0.1s',
+            filter: 'drop-shadow(0 0 24px rgba(201,169,97,0.35))',
           }}
-        >
-          <KrishnaSVG style={{ width: '100%', height: 'auto', filter: 'drop-shadow(0 0 18px rgba(59,91,165,0.5))' }} />
-        </div>
+        />
 
-        {/* Arjuna (right) */}
-        <div
+        {/* Arjuna (right) — mirrored */}
+        <img
+          src={krishnaImg}
+          alt="Arjuna"
           style={{
             position: 'absolute',
-            right: '3%',
+            right: '2%',
             bottom: 0,
-            width: 'clamp(100px, 20vw, 190px)',
+            width: 'clamp(130px, 26vw, 280px)',
+            height: 'auto',
+            objectFit: 'contain',
+            objectPosition: 'bottom',
             opacity: vis('figures') ? 1 : 0,
-            transform: vis('figures') ? 'translateY(0) scaleX(-1)' : 'translateY(24px) scaleX(-1)',
+            transform: vis('figures') ? 'translateY(0) scaleX(-1)' : 'translateY(30px) scaleX(-1)',
             transition: 'opacity 1.2s ease 0.3s, transform 1.2s ease 0.3s',
+            filter: 'drop-shadow(0 0 20px rgba(201,169,97,0.25))',
           }}
-        >
-          <ArjunaSVG style={{ width: '100%', height: 'auto', filter: 'drop-shadow(0 0 12px rgba(90,58,26,0.45))' }} />
-        </div>
+        />
 
         {/* Divine light between them */}
         <div
@@ -316,25 +214,26 @@ export default function Onboarding({ onComplete }) {
       {/* ── Centre content ───────────────────────────────────────── */}
       <div className="absolute inset-0 flex flex-col items-center justify-center px-6 pointer-events-none">
 
-        {/* OM symbol */}
+        {/* ka.png logo */}
         <div
           style={{
             opacity: vis('stars') ? 1 : 0,
             transform: vis('stars') ? 'scale(1)' : 'scale(0.6)',
             transition: 'opacity 1.5s ease, transform 1.5s ease',
             marginBottom: 'clamp(8px, 2vh, 20px)',
+            animation: 'breath-pulse 5s ease-in-out infinite',
           }}
         >
+          {/* swap span → <img src={kaImg} ... /> once ka.png is in assets */}
           <span
             className="font-dev"
             style={{
-              fontSize: 'clamp(36px, 7vw, 60px)',
+              fontSize: 'clamp(40px, 8vw, 68px)',
               background: 'linear-gradient(135deg, #E8843C, #C9A961)',
               WebkitBackgroundClip: 'text',
               WebkitTextFillColor: 'transparent',
               backgroundClip: 'text',
-              filter: 'drop-shadow(0 0 10px rgba(201,169,97,0.4))',
-              animation: 'breath-pulse 5s ease-in-out infinite',
+              filter: 'drop-shadow(0 0 12px rgba(201,169,97,0.45))',
             }}
           >
             ॐ
