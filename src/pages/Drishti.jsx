@@ -1,4 +1,4 @@
-import { useMemo } from 'react';
+import { useMemo, useState } from 'react';
 import {
   BarChart, Bar, XAxis, YAxis, Tooltip, ResponsiveContainer,
   LineChart, Line, CartesianGrid, ReferenceLine,
@@ -13,8 +13,130 @@ import {
   getDayCompletionRate, getTargetSuccessRate,
   getPhilosophicalInsight,
 } from '../utils/streakUtils';
+import { ChevronLeft, ChevronRight } from 'lucide-react';
 import BowArrowSVG from '../components/svgs/BowArrowSVG';
 import ChakraSVG from '../components/svgs/ChakraSVG';
+
+/* ── Monthly Habit Grid ───────────────────────────────────────────── */
+function MonthlyGrid({ logs, pillars }) {
+  const [offset, setOffset] = useState(0);
+
+  const { monthLabel, days } = useMemo(() => {
+    const base = new Date();
+    base.setDate(1);
+    base.setMonth(base.getMonth() + offset);
+    const year  = base.getFullYear();
+    const month = base.getMonth();
+    const total = new Date(year, month + 1, 0).getDate();
+    const today = dateKey(new Date());
+    const days  = Array.from({ length: total }, (_, i) => {
+      const d = new Date(year, month, i + 1);
+      const key = dateKey(d);
+      return { num: i + 1, key, isFuture: key > today };
+    });
+    const monthLabel = base.toLocaleString('default', { month: 'long', year: 'numeric' });
+    return { monthLabel, days };
+  }, [offset]);
+
+  const targets = useMemo(() =>
+    pillars.flatMap((p) =>
+      p.targets
+        .filter((t) => t.frequency === 'daily' || !t.frequency)
+        .map((t) => ({ ...t, color: p.color }))
+    ),
+    [pillars]
+  );
+
+  const pastDays = days.filter((d) => !d.isFuture);
+
+  if (targets.length === 0) return null;
+
+  return (
+    <div className="card mb-4">
+      <div className="flex items-center justify-between mb-3">
+        <span className="text-sm font-semibold text-[#1a1a2e] dark:text-white">{monthLabel}</span>
+        <div className="flex items-center gap-1">
+          <button onClick={() => setOffset((v) => v - 1)}
+            className="w-6 h-6 rounded-lg flex items-center justify-center text-stone-400 hover:text-stone-600 dark:hover:text-stone-200 transition-colors">
+            <ChevronLeft size={14} />
+          </button>
+          {offset < 0 && (
+            <button onClick={() => setOffset((v) => v + 1)}
+              className="w-6 h-6 rounded-lg flex items-center justify-center text-stone-400 hover:text-stone-600 dark:hover:text-stone-200 transition-colors">
+              <ChevronRight size={14} />
+            </button>
+          )}
+        </div>
+      </div>
+
+      <div className="overflow-x-auto -mx-1 pb-1">
+        <div className="min-w-max px-1">
+          {/* Day-number header */}
+          <div className="flex items-center mb-1.5">
+            <div className="w-[88px] flex-shrink-0" />
+            {days.map((d) => (
+              <div key={d.key} className="w-5 flex-shrink-0 text-center"
+                style={{ fontSize: '7px', color: d.isFuture ? 'rgba(0,0,0,0.15)' : '#9CA3AF', fontWeight: 600 }}>
+                {d.num}
+              </div>
+            ))}
+            <div className="w-9 flex-shrink-0 text-center" style={{ fontSize: '8px', color: '#9CA3AF' }}>%</div>
+          </div>
+
+          {/* One row per target */}
+          {targets.map((t) => {
+            const done = pastDays.filter((d) => logs[d.key]?.[t.id]?.done).length;
+            const pct  = pastDays.length > 0 ? Math.round(done / pastDays.length * 100) : 0;
+            return (
+              <div key={t.id} className="flex items-center mb-1">
+                <div className="w-[88px] flex-shrink-0 text-[10px] text-stone-500 dark:text-stone-400 truncate pr-2"
+                  title={t.name}>{t.name}</div>
+                {days.map((d) => {
+                  const isDone = logs[d.key]?.[t.id]?.done;
+                  return (
+                    <div key={d.key} className="w-5 flex-shrink-0 flex items-center justify-center">
+                      <div className="w-3 h-3 rounded-sm" style={{
+                        backgroundColor: isDone
+                          ? t.color
+                          : d.isFuture
+                          ? 'rgba(0,0,0,0.025)'
+                          : 'rgba(0,0,0,0.07)',
+                        opacity: isDone ? 0.87 : 1,
+                        border: d.isFuture ? '1px solid rgba(0,0,0,0.05)' : 'none',
+                      }} />
+                    </div>
+                  );
+                })}
+                <div className="w-9 flex-shrink-0 text-center text-[10px] font-bold tabular-nums" style={{
+                  color: pct >= 80 ? '#C9A961' : pct >= 50 ? '#E8843C' : '#9CA3AF',
+                }}>
+                  {pct}%
+                </div>
+              </div>
+            );
+          })}
+
+          {/* Daily % footer */}
+          <div className="flex items-center mt-2 pt-1.5 border-t border-black/5 dark:border-white/5">
+            <div className="w-[88px] flex-shrink-0" style={{ fontSize: '9px', color: '#9CA3AF' }}>Day %</div>
+            {days.map((d) => {
+              const rate  = getDayCompletionRate(logs, pillars, d.key);
+              const color = rate >= 0.8 ? '#C9A961' : rate >= 0.5 ? '#E8843C' : rate > 0 ? '#5A8A8A' : 'transparent';
+              return (
+                <div key={d.key} className="w-5 flex-shrink-0 text-center">
+                  {!d.isFuture && rate > 0 && (
+                    <span style={{ fontSize: '7px', fontWeight: 700, color }}>{Math.round(rate * 100)}</span>
+                  )}
+                </div>
+              );
+            })}
+            <div className="w-9 flex-shrink-0" />
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+}
 
 /* ── Shared stat card ─────────────────────────────────────────────── */
 function StatCard({ value, label, sublabel, color = '#E8843C', icon = null }) {
@@ -301,6 +423,9 @@ export default function Drishti() {
 
         {/* ── RIGHT column ───────────────────────────────────────── */}
         <div>
+          {/* Monthly habit grid */}
+          <MonthlyGrid logs={logs} pillars={pillars} />
+
           {/* 90-day heatmap */}
           <div className="card mb-4">
             <div className="flex items-center justify-between mb-3">

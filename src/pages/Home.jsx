@@ -55,13 +55,20 @@ function WeekGlance({ logs, pillars }) {
           return (
             <div key={key} className="flex flex-col items-center gap-1.5 flex-1">
               <div
-                className="w-full aspect-square rounded-xl transition-all max-w-[52px]"
+                className="w-full aspect-square rounded-xl transition-all max-w-[52px] flex items-center justify-center"
                 style={{
                   background: rate > 0 ? bg : 'rgba(0,0,0,0.06)',
                   opacity: isToday && rate === 0 ? 0.55 : rate > 0 ? 0.88 : 0.35,
                   boxShadow: isToday ? '0 0 0 2px #E8843C' : 'none',
                 }}
-              />
+              >
+                {rate > 0 && (
+                  <span className="text-white font-bold tabular-nums select-none leading-none"
+                    style={{ fontSize: 'clamp(7px, 1.4vw, 10px)', textShadow: '0 1px 2px rgba(0,0,0,0.25)' }}>
+                    {Math.round(rate * 100)}
+                  </span>
+                )}
+              </div>
               <span
                 className="text-[10px] font-bold"
                 style={{ color: isToday ? '#E8843C' : '#9CA3AF' }}
